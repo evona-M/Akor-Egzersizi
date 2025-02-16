@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akor Öğrenme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('https://wallpaperswide.com/download/music_background_2-wallpaper-1920x1200.jpg');
+            background-size: cover;
+            color: black;
+        }
+        #chord-display {
+            font-size: 36px;
+            margin-top: 50px;
+        }
+        #chord-image {
+            margin-top: 20px;
+            width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        #slider {
+            margin-top: 20px;
+        }
+        #level-selector {
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Akor Geçiş Öğrenme</h1>
+
+    <div id="level-selector">
+        <label for="level">Akor Seçin:</label>
+        <select id="level">
+            <option value="easy">Basit Akorlar</option>
+            <option value="medium">Orta Seviye Akorlar</option>
+            <option value="hard">Zor Akorlar</option>
+        </select>
+    </div>
+
+    <div id="chord-display">Akor Seçin ve Başlatın</div>
+
+    <img id="chord-image" src="" alt="Akor Resmi">
+
+    <div id="slider">
+        <label for="time">Akor Geçiş Süresi (Saniye):</label>
+        <input type="range" id="time" min="0.5" max="5" value="2" step="0.5">
+        <span id="time-value">2</span>
+    </div>
+
+    <button id="toggle-btn" onclick="toggleStartStop()">Başlat</button>
+
+    <script>
+        const chords = {
+            easy: [
+                { name: "C Major", imageUrl: "https://chordbank.com/cb4dg/cagey_dani_1_750.png" },
+                { name: "Am", imageUrl: "https://chordbank.com/cb4dg/artful_luigi_1_750.png" },
+                { name: "G Major", imageUrl: "https://chordbank.com/cb4dg/notable_cora_1_750.png" },
+                { name: "Em", imageUrl: "https://chordbank.com/cb4dg/earthy_clo_1_750.png" },
+                { name: "D Major", imageUrl: "https://chordbank.com/cb4dg/acidic_mel_1_750.png" },
+                { name: "F Major", imageUrl: "https://chordbank.com/cb4dg/grumpy_lulu_1_750.png" },
+                { name: "A Major", imageUrl: "https://chordbank.com/cb4dg/artful_mae_1_750.png" },
+                { name: "Dm", imageUrl: "https://chordbank.com/cb4dg/acidic_mei_1_750.png" }
+            ],
+            medium: [
+                { name: "B Major", imageUrl: "https://chordbank.com/cb4dg/bestial_skip_2_750.png" },
+                { name: "C Major Barre (1st Fret)", imageUrl: "https://guitarlessons-com-public.s3.amazonaws.com/graphics/rhythm-quick-start/c-major-bar.png" },
+                { name: "F Major Barre (1st Fret)", imageUrl: "https://chordbank.com/cb4dg/grumpy_lulu_1_750.png" },
+                { name: "G Major Barre (3rd Fret)", imageUrl: "https://guitarlessons-com.s3.amazonaws.com/media/guitar-lessons/drills-g-major-bar-chord.png" },
+                { name: "Bm", imageUrl: "https://chordbank.com/cb4dg/bestial_sam_2_750.png" }
+            ],
+            hard: [
+                { name: "C Major Barre (3rd Fret)", imageUrl: "https://guitarlessons-com-public.s3.amazonaws.com/graphics/rhythm-quick-start/c-major-bar.png" },
+                { name: "F Major Barre (Full Fret)", imageUrl: "https://chordbank.com/cb4dg/grumpy_lulu_1_750.png" },
+                { name: "Bmin7", imageUrl: "https://chordbank.com/cb4dg/blurry_lois_1_750.png" },
+                { name: "G# Major", imageUrl: "https://chordbank.com/cb4dg/grumpy_lulu_4_750.png" },
+                { name: "D# Minor", imageUrl: "https://chordbank.com/cb4dg/agile_mei_2_750.png" }
+            ]
+        };
+
+        let chordCycle;
+        let chordIndex = 0;
+        let selectedLevel = "easy";
+        let chordSpeed = 2;
+
+        document.getElementById('level').addEventListener('change', function () {
+            selectedLevel = this.value;
+            chordIndex = 0;
+            displayChord();
+        });
+
+        document.getElementById('time').addEventListener('input', function () {
+            chordSpeed = this.value;
+            document.getElementById('time-value').textContent = chordSpeed;
+        });
+
+        function displayChord() {
+            const chord = chords[selectedLevel][chordIndex];
+            document.getElementById('chord-display').textContent = chord.name;
+            document.getElementById('chord-image').src = chord.imageUrl;
+            document.getElementById('chord-image').style.display = 'block';
+        }
+
+        function toggleStartStop() {
+            const button = document.getElementById('toggle-btn');
+
+            if (chordCycle) {
+                clearInterval(chordCycle);
+                chordCycle = null;
+                button.textContent = 'Başlat';
+                document.getElementById('chord-display').textContent = "Akor Seçin ve Başlatın";
+                document.getElementById('chord-image').style.display = 'none';
+            } else {
+                chordCycle = setInterval(function () {
+                    chordIndex = (chordIndex + 1) % chords[selectedLevel].length;
+                    displayChord();
+                }, chordSpeed * 1000);
+
+                button.textContent = 'Durdur';
+            }
+        }
+
+        displayChord();
+    </script>
+
+</body>
+</html>
